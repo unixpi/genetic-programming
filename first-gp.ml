@@ -1,5 +1,7 @@
 type var = string
-	     
+
+exception Length_error of string;;
+  
 type exp =
   | Plus of exp * exp
   | Minus of exp * exp
@@ -13,9 +15,10 @@ let func_set = ["Plus"; "Minus"; "Times"; "Div"]
 
 let choose_random_element list = 5
 
-let rec nth list n = match (n, list) with
+let rec nth n list = match (n, list) with
+  | (_,[]) -> raise (Length_error "cannot get nth value from empty list")
   | (0, h :: t) -> h
-  |  ->
+  | (n, h :: t) -> nth (n-1) t
     
     
 		   
