@@ -37,6 +37,7 @@ let rec gen_rnd_expr func_set term_set max_d methd =
 	      | "Times"-> Times(gen_rnd_expr func_set term_set (x-1) methd,gen_rnd_expr func_set term_set (x-1) methd)
 	      | "Div"  -> Div(gen_rnd_expr func_set term_set (x-1) methd,gen_rnd_expr func_set term_set (x-1) methd)
 
+
 			
 	 
 		  

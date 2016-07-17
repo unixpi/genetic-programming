@@ -1,0 +1,97 @@
+Selection
+
+better individuals are more likely to have more child programs than inferior
+individuals. The most commonly employed method for selecting individuals
+in GP is tournament selection
+
+In tournament selection a number of individuals are chosen at random
+from the population. These are compared with each other and the best of
+them is chosen to be the parent. When doing crossover, two parents are
+needed and, so, two selection tournaments are made
+
+Note that tournament
+selection only looks at which program is better than another. It does
+not need to know how much better. This effectively automatically rescales
+fitness, so that the selection pressure4 on the population remains constant.
+Thus, a single extraordinarily good program cannot immediately swamp the
+next generation with its children; if it did, this would lead to a rapid loss
+of diversity with potentially disastrous consequences for a run. Conversely,
+tournament selection amplifies small differences in fitness to prefer the better
+program even if it is only marginally superior to the other individuals in
+a tournament.
+
+An element of noise is inherent in tournament selection due to the random
+selection of candidates for tournaments. So, while preferring the best,
+tournament selection does ensure that even average-quality programs have
+some chance of having children. Since tournament selection is easy to implement
+and provides automatic fitness rescaling, it is commonly used in GP.
+
+Considering that selection has been described many times in the evolutionary
+algorithms literature, we will not provide details of the numerous
+other mechanisms that have been proposed. (Goldberg, 1989), for example,
+describes fitness-proportionate selection, stochastic universal sampling and
+several others.
+
+
+
+
+
+Crossover and mutation
+
+GP departs significantly from other evolutionary algorithms in the implementation
+of the operators of crossover and mutation.
+
+The most commonly
+used form of crossover is subtree crossover. Given two parents, subtree
+crossover randomly (and independently) selects a crossover point (a node)
+in each parent tree. Then, it creates the offspring by replacing the subtree
+rooted at the crossover point in a copy of the first parent with a copy of
+the subtree rooted at the crossover point in the second parent, as illustrated
+in Figure 2.5. Copies are used to avoid disrupting the original individuals.
+This way, if selected multiple times, they can take part in the creation of
+multiple offspring programs.
+
+Note that it is also possible to define a version
+of crossover that returns two offspring, but this is not commonly used.
+Often crossover points are not selected with uniform probability
+as this leads to crossover operations frequently exchanging only very small amounts
+of genetic material (i.e, small subtrees); many crossovers may in fact, reduce to simply
+swapping two leaves
+
+To counter this, Koza suggested the widely used approach of choosing functions 90% of the time
+and leaves 10% of the time. many other types of crossover and mutation of GP trees are
+possible
+
+The most commonly used form of mutation in GP (which we will call
+subtree mutation) randomly selects a mutation point in a tree and substitutes
+the subtree rooted there with a randomly generated subtree.
+
+Subtree mutation is sometimes implemented as
+crossover between a program and a newly generated random program; this
+operation is also known as “headless chicken” crossover
+
+Another common form of mutation is point mutation, In point mutation, a random node is selected and the primitive
+stored there is replaced with a different random primitive of the same arity
+taken from the primitive set. If no other primitives with that arity exist,
+nothing happens to that node (but other nodes may still be mutated).
+
+When subtree mutation is applied, this involves the modification of exactly
+one subtree. Point mutation, on the other hand, is typically applied on a
+per-node basis. That is, each node is considered in turn and, with a certain
+probability.
+
+The choice of which of the operators described above should be used
+to create an offspring is probabilistic. Operators in GP are normally mutually
+exclusive (unlike other evolutionary algorithms where offspring are
+sometimes obtained via a composition of operators). Their probability of
+application are called operator rates. Typically, crossover is applied with the
+highest probability, the crossover rate often being 90% or higher. On the
+contrary, the mutation rate is much smaller, typically being in the region of
+1%.
+When the rates of crossover and mutation add up to a value p which is
+less than 100%, an operator called reproduction is also used, with a rate of
+1 − p. Reproduction simply involves the selection of an individual based on
+fitness and the insertion of a copy of it in the next generation.
+
+
+
