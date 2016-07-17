@@ -10,7 +10,21 @@ type exp =
 
 let term_set = [Int 2; Int 5; Var "x"; Var "y"]
 let func_set = ["Plus"; "Minus"; "Times"; "Div"]
-		 
+
+let choose_random_element list = 5
+
+let rec nth list n = match (n, list) with
+  | (0, h :: t) -> h
+  |  ->
+    
+    
+		   
+let rec length list = match list with
+  | [] -> 0
+  | h :: t -> 1 + (length t)
+				
+      
+   		 
 let rec gen_rnd_expr func_set term_set max_d methd = match max_d with
   | 0 -> let expr = choose_random_element(term_set) in expr
   | x -> let func = choose_random_element(func_set) in
