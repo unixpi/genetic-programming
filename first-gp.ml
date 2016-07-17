@@ -1,5 +1,6 @@
 type var = string
 
+exception Error of string
 exception Length_error of string;;
   
 type exp =
@@ -24,10 +25,6 @@ let rec length list = match list with
 
 let choose_random_element list = nth (Random.int (length list)) list
 
-let combineInts v1 v2 op = match v1, v2 with
-    | Int i1, Int i2 -> Int (op i1 i2)
-    | _, _ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Ints")
-
 let rec gen_rnd_expr func_set term_set max_d methd =
   if (methd = "grow" &&
 	((Random.float 1.0) < (float_of_int(length term_set) /. float_of_int((length term_set) + (length func_set)))))
@@ -42,11 +39,16 @@ let rec gen_rnd_expr func_set term_set max_d methd =
 	      | "Div"  -> Div(gen_rnd_expr func_set term_set (x-1) methd,gen_rnd_expr func_set term_set (x-1) methd)
 
 let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
+  | Int z -> Int z
   | Plus(e1, e2) -> Plus(subst (e,x) e1, subst (e,x) e2)
   | Minus(e1, e2) -> Minus(subst (e,x) e1, subst (e,x) e2)
   | Times(e1, e2) -> Times(subst (e,x) e1, subst (e,x) e2)
   | Div(e1, e2) -> Div(subst (e,x) e1, subst (e,x) e2)
   | Var y -> if y = x then e else Var y
+
+let combineInts v1 v2 op = match v1, v2 with
+    | Int i1, Int i2 -> Int (op i1 i2)
+    | _, _ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Ints")
 
 let rec eval (e : exp) : exp = match e with
   | Int n -> Int n
@@ -69,10 +71,12 @@ let rec eval (e : exp) : exp = match e with
   | Var x -> raise (Error "unbound variable")
 		     
 
+(* test
 
-			
-	 
-		  
+eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "grow"))));;
+eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "full"))));;
+
+
 				 
 					   
 	 
