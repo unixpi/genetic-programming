@@ -37,6 +37,34 @@ let rec gen_rnd_expr func_set term_set max_d methd =
 	      | "Times"-> Times(gen_rnd_expr func_set term_set (x-1) methd,gen_rnd_expr func_set term_set (x-1) methd)
 	      | "Div"  -> Div(gen_rnd_expr func_set term_set (x-1) methd,gen_rnd_expr func_set term_set (x-1) methd)
 
+let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
+  | Plus(e1, e2) -> Plus(subst (e,x) e1, subst (e,x) e2)
+  | Minus(e1, e2) -> Minus(subst (e,x) e1, subst (e,x) e2)
+  | Times(e1, e2) -> Times(subst (e,x) e1, subst (e,x) e2)
+  | Div(e1, e2) -> Div(subst (e,x) e1, subst (e,x) e2)
+  | Var y -> if y = x then e else Var y
+
+let rec eval (e : exp) : exp = match e with
+  | Int n -> Int n
+  | Plus(e1, e2) -> (let v1 = eval e1 in
+		       let v2 = eval e2 in
+		       combineInts v1 v2 (+)
+		    )
+  | Minus(e1, e2) -> (let v1 = eval e1 in
+			let v2 = eval e2 in
+			combineInts v1 v2 (-)
+		     )
+  | Times(e1, e2) -> (let v1 = eval e1 in
+			let v2 = eval e2 in
+			combineInts v1 v2 ( * )
+		     )
+  | Div(e1, e2) ->  (let v1 = eval e1 in
+		       let v2 = eval e2 in
+		       combineInts v1 v2 ( / )
+		    )
+  | Var x -> raise (Error "unbound variable")
+		     
+
 
 			
 	 
