@@ -13,8 +13,10 @@ type exp =
   | Var of var
 
 (* first step - identify terminal set *)	     
-let term_set = [Var "x"; Int 0; Int 1; Int 2; Int 3; Int 4; Int 5;
-	       Int (-1); Int (-2); Int (-3); Int (-4); Int (-5)] 
+let term_set = [Var "x"; Var "x"; Var "x"; Var "x"; Var "x";
+		Var "x"; Var "x"; Var "x"; Var "x"; Var "x";
+		Float 0.0; Float 1.0; Float 2.0; Float 3.0; Float 4.0; Float 5.0;
+		Float (-1.0); Float (-2.0); Float (-3.0); Float (-4.0); Float (-5.0)] 
 
 (* second step - identify function set *)		 
 let func_set = ["Plus"; "Minus"; "Times"; "Div"]
@@ -62,11 +64,13 @@ let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
 let combineInts v1 v2 op = match v1, v2, op with
   | Int i1, Int i2, ( / ) -> if i2 = 0 then Int 1 else Int (op i1 i2)
   | Int i1, Int i2, _ -> Int (op i1 i2)
-  | _, _,_ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Ints op operator is not defined in grammar")
+  | _, _,_ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Int(s)" )
 
-let combineFloats v1 v2 op = match v1, v2 with
-    | Float f1, Float f2 -> Float (op f1 f2)
-    | _       , _        -> raise (Error "You are crazy!")
+let combineFloats v1 v2 op = match v1, v2, op with
+  | Float f1, Float f2, ( /. ) -> if f2 = 0.0 then Float 1.0 else Float (op f1 f2)
+  | Float i1, Float i2, _ -> Float (op i1 i2)
+  | _, _,_ -> raise (Error "either one or both arguments given to combineFloats are (is) not (an) Float(s)")							
+  
 
 let rec eval (e : exp) : exp = match e with
   | Int n -> Int n
@@ -106,18 +110,23 @@ let rec eval (e : exp) : exp = match e with
 eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "grow"))));;
 eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "full"))));;
 
+calculate_fitness (gen_rnd_expr func_set term_set 2 "full") (-1.0) 1.0 0.1
  *)
 (* Fitness : sum of absolute errors for x in {-1.0, -0.9, ...0.9, 1.0}
  *)
 
-let calculate_fitness expr lbound ubound step = (* return tuple (expr * total_fitness) *)
-  let rec calculate_fitness' current acc = match current with
-    | ubound -> acc
-    | _ ->  let fitness = (eval (subst(Float current, "x") expr)) in
-	    match fitness with
-	    | Float f -> calculate_fitness' (current +. step) (acc +. f)
-  in calculate_fitness' lbound 0.0
+let epsilon = 1.0e-10
+let (=.) a b = (abs_float (a-.b)) < epsilon;;
   
+let calculate_fitness expr lbound ubound step = (* return tuple (expr * total_fitness) *)
+  let rec calculate_fitness' current acc =
+    if current =. ubound then acc else match current with
+				      | _ ->  let fitness = (eval (subst(Float current, "x") expr)) in
+					      match fitness with
+					      | Float f -> calculate_fitness' (current +. step) (acc +. f)
+  in calculate_fitness' lbound 0.0
+
+			
 
 			      
 			      
