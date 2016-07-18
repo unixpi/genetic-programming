@@ -110,7 +110,7 @@ eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "f
 (* Fitness : sum of absolute errors for x in {-1.0, -0.9, ...0.9, 1.0}
  *)
 
-let calculate_fitness exp = 
+let calculate_fitness expr = (* return tuple (expr * total_fitness)
 
 		  
 
