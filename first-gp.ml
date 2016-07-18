@@ -46,7 +46,10 @@ let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
   | Div(e1, e2) -> Div(subst (e,x) e1, subst (e,x) e2)
   | Var y -> if y = x then e else Var y
 
-let combineInts v1 v2 op = match v1, v2 with
+let combineInts v1 v2 op =
+  if (op = ( / ) && v2 = Int 0) then (Int 1)
+  else
+    match v1, v2 with
     | Int i1, Int i2 -> Int (op i1 i2)
     | _, _ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Ints")
 
@@ -71,10 +74,14 @@ let rec eval (e : exp) : exp = match e with
   | Var x -> raise (Error "unbound variable")
 		     
 
-(* test
+(* test cases
 
 eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "grow"))));;
 eval (subst(Int 4, "y") ((subst(Int 3, "x") (gen_rnd_expr func_set term_set 2 "full"))));;
+
+ *)
+
+		  
 
 
 				 
