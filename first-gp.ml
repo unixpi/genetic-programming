@@ -120,12 +120,26 @@ let (=.) a b = (abs_float (a-.b)) < epsilon;;
   
 let calculate_fitness expr lbound ubound step = (* return tuple (expr * total_fitness) *)
   let rec calculate_fitness' current acc =
-    if current =. ubound then acc else match current with
+    if current =. ubound then (expr,acc) else match current with
 				      | _ ->  let fitness = (eval (subst(Float current, "x") expr)) in
 					      match fitness with
 					      | Float f -> calculate_fitness' (current +. step) (acc +. f)
   in calculate_fitness' lbound 0.0
 
+
+let rec generate_initial_pop number grow_percentage acc = match number with
+  | 0 -> acc
+  | _ -> if (Random.float 1.0) > grow_percentage then
+	   let member = (gen_rnd_expr func_set term_set 2 "full") in
+	   generate_initial_pop (number - 1) grow_percentage (member :: acc)
+	 else
+	   let member = (gen_rnd_expr func_set term_set 2 "grow") in
+	   generate_initial_pop (number - 1) grow_percentage (member :: acc)
+				
+	   
+	   
+let tournament_selection size p = "placeholder" 
+  
 			
 
 			      
