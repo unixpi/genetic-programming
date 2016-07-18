@@ -8,10 +8,19 @@ type exp =
   | Minus of exp * exp
   | Times of exp * exp
   | Div of exp * exp
-  | Int of int
+  | Float of float
   | Var of var
 
-let term_set = [Int 2; Int 5; Var "x"; Var "y"]
+(* first step - identify terminal set *)	     
+let term_set = [Var "x"; Var "randomFloat"] (* add in random floats here *)
+
+let generateRandomFloat =
+  let sign = Random.int 2 in
+  let float = Random.float 5.0 in
+  match sign with
+  | 0 -> Float float
+  | 1 -> Float (-. float)
+		 
 let func_set = ["Plus"; "Minus"; "Times"; "Div"]
 
 let rec nth n list = match (n, list) with
