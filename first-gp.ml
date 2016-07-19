@@ -163,8 +163,8 @@ let tournament_selection k p = match k with
   | 0 -> []
   | k -> []
 
-(* select_individual_from_sorted_population sorted_pop Random.float 0.0 -1 *)
 	   
+(* select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0 *)
 let rec select_individual_from_sorted_population sorted_pop random_number p k = match (p > random_number), sorted_pop with
   | true, h :: t -> h
   | false, h :: t ->
