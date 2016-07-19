@@ -176,7 +176,7 @@ let rec tournament_selection k = match k with
   | 0 -> []
   | k -> (select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0) :: tournament_selection (k-1)
 
-  
+(* define reproduction, mutation and crossover functions *)  
   
        
   
