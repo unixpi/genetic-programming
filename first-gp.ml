@@ -156,7 +156,7 @@ let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 
 (* select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0 *)
 	   
 let rec select_individual_from_sorted_population sorted_pop random_number p k =
-  match ((p > random_number) || (t_prob > random_number)), sorted_pop with
+  match (p > random_number), sorted_pop with
   | true, h :: t -> h
   | false, h :: t ->
      select_individual_from_sorted_population t random_number (p +. ( t_prob *. (pow_float (1.0 -. t_prob) k) ) ) (k+1)
@@ -174,7 +174,7 @@ and so on... *)
 					     
 let rec tournament_selection k = match k with
   | 0 -> []
-  | k -> (select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0) :: tournament_selection (k-1)
+  | k -> (select_individual_from_sorted_population sorted_population (Random.float 1.0) t_prob 0) :: tournament_selection (k-1)
 
 (* define reproduction, mutation and crossover functions *)  
   
