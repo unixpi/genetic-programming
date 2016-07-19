@@ -181,6 +181,40 @@ let rec tournament_selection k = match k with
 let reproduction individual = match individual with
   | (expr,fitness) -> expr
 
+(* let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
+  | Int z -> Int z
+  | Float z -> Float z
+  | Plus(e1, e2) -> Plus(subst (e,x) e1, subst (e,x) e2)
+  | Minus(e1, e2) -> Minus(subst (e,x) e1, subst (e,x) e2)
+  | Times(e1, e2) -> Times(subst (e,x) e1, subst (e,x) e2)
+  | Div(e1, e2) -> Div(subst (e,x) e1, subst (e,x) e2)
+  | Var y -> if y = x then e else Var y
+ *)
+
+let rec find_node_by_depth_first_search_and_mutate expr num = match num with
+  | 1 -> (match expr with
+	 | Int z -> choose_random_element term_set
+	 | Float z -> choose_random_element term_set
+	 | Plus(e1, e2) -> (let random_n = Random.float 1.0 in
+			   match (random_n < 0.66) with
+			   |  true  -> (match (random_n < 0.33) with
+				       | true  -> Minus(e1, e2) 
+				       | false -> Times(e1, e2)
+				       )
+		           |  false -> Div(e1,e2)
+			   		     
+			   )
+	 )
+  | k -> 
+	 
+
+	   
+  
+let rec mutation individual = match individual with
+  | (expr,fitness) -> 
+				
+  
+
 
     
   
