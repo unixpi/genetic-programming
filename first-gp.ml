@@ -195,6 +195,7 @@ exception Position_so_far of int
 		   
 let rec find_node_by_depth_first_search_and_mutate expr num = match num with
   | 1 -> (match expr with
+	 | Var x -> choose_random_element term_set
 	 | Int z -> choose_random_element term_set
 	 | Float z -> choose_random_element term_set
 	 | Plus(e1, e2) -> (let random_n = Random.float 1.0 in
@@ -203,11 +204,11 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 				       | true  -> Minus(e1, e2) 
 				       | false -> Times(e1, e2)
 				       )
-		           |  false -> Div(e1,e2)
-			   		     
+		           |  false -> Div(e1,e2)		     
 			   )
 	 )
   | k -> (match expr with
+	  | Var x -> raise (Position_so_far k)
 	  | Int z -> raise (Position_so_far k)
 	  | Float z -> raise (Position_so_far k)
 	  | Plus(e1,e2) -> try Plus((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
