@@ -203,8 +203,7 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 				       | true  -> Minus(e1, e2) 
 				       | false -> Times(e1, e2)
 				       )
-		           |  false -> Div(e1,e2)
-			   		     
+		           |  false -> Div(e1,e2)		     
 			   )
 	 )
   | k -> (match expr with
