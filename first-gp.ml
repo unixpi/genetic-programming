@@ -61,17 +61,13 @@ let rec subst (e,x : exp * var) (e' : exp) : exp = match e' with
   | Div(e1, e2) -> Div(subst (e,x) e1, subst (e,x) e2)
   | Var y -> if y = x then e else Var y
 
-let combineInts v1 v2 op = match v1, v2, op with
-  | Int i1, Int i2, ( / ) -> if i2 = 0 then Int 1 else Int (op i1 i2)
-  | Int i1, Int i2, _ -> Int (op i1 i2)
-  | _, _,_ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Int(s)" )
+let combineInts v1 v2 op = match v1, v2 with
+  | Int i1, Int i2 -> Int (op i1 i2)
+  | _, _ -> raise (Error "either one or both arguments given to combineInts are (is) not (an) Int(s)" )
 
-let combineFloats v1 v2 op = match v1, v2, op with
-  | Float f1, Float f2, ( /. ) -> if f2 = 0.0 then Float 1.0 else Float (op f1 f2)
-  | Float i1, Float i2, _ -> Float (op i1 i2)
-  | _, _,_ -> raise (Error "either one or both arguments given to combineFloats are (is) not (an) Float(s)")							
-  
-
+let combineFloats v1 v2 op = match v1, v2 with
+  | Float i1, Float i2 -> Float (op i1 i2)
+  | _, _ -> raise (Error "either one or both arguments given to combineFloats are (is) not (an) Float(s)")							
 let rec eval (e : exp) : exp = match e with
   | Int n -> Int n
   | Float n -> Float n
@@ -98,10 +94,13 @@ let rec eval (e : exp) : exp = match e with
 		       )
     | Div(e1, e2) ->  (let v1 = eval e1 in
 		       let v2 = eval e2 in
-		       try
-			 combineFloats v1 v2 ( /. )
-		       with
-			 _ -> combineInts v1 v2 ( / )
+		       match v2 with
+		       | Float 0.0 -> Float 1.0
+		       | Int 0 -> Int 1
+		       | _ -> try
+			      combineFloats v1 v2 ( /. )
+			    with
+			      _ -> combineInts v1 v2 ( / )
 		      )
     | Var x -> raise (Error "unbound variable")
 
@@ -147,10 +146,10 @@ let rec map f l = match l with
   | h :: t -> (f h) :: (map f t);;
 
 (* generate initial population and calculate initial fitness 
-map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population) 
+sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population))
  *)
 
-let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> if y1 < y2 then 1 else -1
+let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 y2) pop_list
 				   
 let tournament_selection size p = "placeholder" 
   
