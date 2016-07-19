@@ -163,10 +163,13 @@ let tournament_selection k p = match k with
   | 0 -> []
   | k -> []
 
-let select_individual_from_sorted_population p random_number sorted_pop exponent = match (p > random_number), sorted_pop with
+(* select_individual_from_sorted_population sorted_pop Random.float 0.0 -1 *)
+	   
+let rec select_individual_from_sorted_population sorted_pop random_number p k = match (p > random_number), sorted_pop with
   | true, h :: t -> h
-  | false, h :: t -> select_individual_from_sorted_population (p +. t_prob *. (1 -. t_prob)) random_number t
-  | _, [] -> select_individual_from_sorted_population t_prob (Random.float 1.0) sorted_population
+  | false, h :: t ->
+     select_individual_from_sorted_population t random_number (p +. ( t_prob *. (pow_float (1.0 -. t_prob) k) ) ) (k+1)
+  | _, [] -> select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0
 
 let rec pow_float float exp = match exp with
   | 0 -> 1.0
