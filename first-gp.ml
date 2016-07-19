@@ -152,20 +152,11 @@ let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0
 let t_prob = 0.8
  
 let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 y2) pop_list
-
-(* choose k (the tournament size) individuals from the population at random
-choose the best individual from pool/tournament with probability p
-choose the second best individual with probability p*(1-p)
-choose the third best individual with probability p*((1-p)^2)
-and so on... *)
-					     
-let tournament_selection k p = match k with
-  | 0 -> []
-  | k -> []
-
 	   
 (* select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0 *)
-let rec select_individual_from_sorted_population sorted_pop random_number p k = match (p > random_number), sorted_pop with
+	   
+let rec select_individual_from_sorted_population sorted_pop random_number p k =
+  match ((p > random_number) || (t_prob > random_number)), sorted_pop with
   | true, h :: t -> h
   | false, h :: t ->
      select_individual_from_sorted_population t random_number (p +. ( t_prob *. (pow_float (1.0 -. t_prob) k) ) ) (k+1)
@@ -174,8 +165,17 @@ let rec select_individual_from_sorted_population sorted_pop random_number p k = 
 let rec pow_float float exp = match exp with
   | 0 -> 1.0
   | k -> float *. (pow_float float (k - 1))
-				       
-      
+				             
+(* choose k (the tournament size) individuals from the population at random
+choose the best individual from pool/tournament with probability p
+choose the second best individual with probability p*(1-p)
+choose the third best individual with probability p*((1-p)^2)
+and so on... *)
+					     
+let rec tournament_selection k = match k with
+  | 0 -> []
+  | k -> (select_individual_from_sorted_population sorted_population (Random.float 1.0) 0.0 0) :: tournament_selection (k-1)
+
   
   
        
