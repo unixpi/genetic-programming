@@ -145,14 +145,36 @@ let rec map f l = match l with
   | [] -> []
   | h :: t -> (f h) :: (map f t);;
 
-(* generate initial population and calculate initial fitness 
-sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population))
- *)
+(* generate initial population and calculate initial fitness *)
+
+let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population))
+
+let tournament_probability = 0.8
+ 
 
 let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 y2) pop_list
-				   
-let tournament_selection size p = "placeholder" 
+
+(* choose k (the tournament size) individuals from the population at random
+choose the best individual from pool/tournament with probability p
+choose the second best individual with probability p*(1-p)
+choose the third best individual with probability p*((1-p)^2)
+and so on... *)
+					     
+let tournament_selection k p = match k with
+  | 0 -> []
+  | k -> []
+
+let select_individual_from_sorted_population p random_number sorted_pop = match (p > random_number), sorted_pop with
+  | true, h :: t -> h
+  | false, h :: t -> select_individual_from_sorted_population (p *. (1 -. p)) t
+  | _, [] -> select_individual_from_sorted_population tournament_probability sorted_population
+    
   
+  
+       
+  
+
+				    
 			
 
 			      
