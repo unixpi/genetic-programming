@@ -148,7 +148,9 @@ let rec map f l = match l with
 
 (* generate initial population and calculate initial fitness 
 map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population) 
-*)
+ *)
+
+let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> if y1 < y2 then 1 else -1
 				   
 let tournament_selection size p = "placeholder" 
   
