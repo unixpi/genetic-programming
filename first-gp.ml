@@ -191,6 +191,8 @@ let reproduction individual = match individual with
   | Var y -> if y = x then e else Var y
  *)
 
+exception Position_so_far of int
+		   
 let rec find_node_by_depth_first_search_and_mutate expr num = match num with
   | 1 -> (match expr with
 	 | Int z -> choose_random_element term_set
@@ -205,7 +207,9 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 			   		     
 			   )
 	 )
-  | k -> 
+  | k -> (match expr with
+	  | Plus(e1,e2) -> try Plus((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
+			   | Position_so_far x -> Plus(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) )
 	 
 
 	   
