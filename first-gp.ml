@@ -118,17 +118,16 @@ calculate_fitness (gen_rnd_expr func_set term_set 2 "full") (-1.0) 1.0 0.1
 let epsilon = 1.0e-10
 let (=.) a b = (abs_float (a-.b)) < epsilon;;
   
-let calculate_fitness lbound ubound step = (* return tuple (expr * total_fitness) *)
+let calculate_fitness lbound ubound step ideal = (* return tuple (expr * total_fitness) *)
   (fun expr ->
-  let rec calculate_fitness' current acc ideal =
+  let rec calculate_fitness' current acc  =
     if current =. ubound then (expr,acc) else match current with
 					      | _ ->  let program_result = (eval (subst(Float current, "x") expr)) in
-						      let ideal_result = Float 1.0 in
-						      let fitness = (eval (Minus(program_result,ideal_result)))
-						      
-					      match fitness with
-					      | Float f -> let abs_f = abs_float(f) in
-							   calculate_fitness' (current +. step) (acc +. abs_float)
+						      let ideal_result = Float ideal(current) in
+						      let fitness = (eval (Minus(program_result,ideal_result))) in
+						      match fitness with
+						      | Float f -> let abs_f = abs_float(f) in
+								   calculate_fitness' (current +. step) (acc +. abs_f)
   in calculate_fitness' lbound 0.0
   )
 let population = []
@@ -148,7 +147,7 @@ let rec map f l = match l with
   | h :: t -> (f h) :: (map f t);;
 
 (* generate initial population and calculate initial fitness 
-map (calculate_fitness (-1.0) 1.0 0.1) (generate_initial_pop 4 0.5 population) 
+map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population) 
 *)
 				   
 let tournament_selection size p = "placeholder" 
