@@ -149,9 +149,8 @@ let rec map f l = match l with
 
 let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population))
 
-let tournament_probability = 0.8
+let t_prob = 0.8
  
-
 let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 y2) pop_list
 
 (* choose k (the tournament size) individuals from the population at random
@@ -164,11 +163,16 @@ let tournament_selection k p = match k with
   | 0 -> []
   | k -> []
 
-let select_individual_from_sorted_population p random_number sorted_pop = match (p > random_number), sorted_pop with
+let select_individual_from_sorted_population p random_number sorted_pop exponent = match (p > random_number), sorted_pop with
   | true, h :: t -> h
-  | false, h :: t -> select_individual_from_sorted_population (p *. (1 -. p)) t
-  | _, [] -> select_individual_from_sorted_population tournament_probability sorted_population
-    
+  | false, h :: t -> select_individual_from_sorted_population (p +. t_prob *. (1 -. t_prob)) random_number t
+  | _, [] -> select_individual_from_sorted_population t_prob (Random.float 1.0) sorted_population
+
+let rec pow_float float exp = match exp with
+  | 0 -> 1.0
+  | k -> float *. (pow_float float (k - 1))
+				       
+      
   
   
        
