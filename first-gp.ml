@@ -120,9 +120,9 @@ let (=.) a b = (abs_float (a-.b)) < epsilon;;
 let calculate_fitness lbound ubound step ideal = (* return tuple (expr * total_fitness) *)
   (fun expr ->
   let rec calculate_fitness' current acc  =
-    if current =. ubound then (expr,acc) else match current with
+    if current =. (ubound +. step) then (expr,acc) else match current with
 					      | _ ->  let program_result = (eval (subst(Float current, "x") expr)) in
-						      let ideal_result = Float ideal(current) in
+						      let ideal_result = Float (ideal(current)) in
 						      let fitness = (eval (Minus(program_result,ideal_result))) in
 						      match fitness with
 						      | Float f -> let abs_f = abs_float(f) in
