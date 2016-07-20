@@ -335,7 +335,7 @@ let hd list = match list with
 let tl list = match list with
   | h :: t -> t
   
-let create_new_generation old_sorted_generation iterations = match iterations with
+let rec create_new_generation old_sorted_generation iterations = match iterations with
   | 0 -> []
   | k -> let random_number = Random.float 1.0 in
 	 match (random_number > 0.9) with
