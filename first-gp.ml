@@ -215,12 +215,22 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 			   | Position_so_far x -> Plus(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) )
 	 )
 
-	   
+
+let node_counter = ref 0
+
+let reset_counter () = (node_counter := 0)
   
+let rec num_nodes expr = match expr with
+  | Var x -> node_counter := (!node_counter + 1)
+  | Int z -> node_counter := (!node_counter + 1)
+  | Float z -> node_counter := (!node_counter + 1)
+  | Plus(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
+
 let rec mutation individual = match individual with
-  | (expr,fitness) -> 
+  | (expr,fitness) -> num_nodes expr; find_node_by_depth_first_search_and_mutate expr !node_counter
 				
-  
+
+			
 
 
     
