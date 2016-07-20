@@ -319,10 +319,10 @@ let rec replace_sub_expr expr replacement_sub_expr pos  = match pos with
 let crossover parent1 parent2 = match parent1, parent2 with
   | (expr1,fitness1),(expr2,fitness2) -> parent_num_nodes expr1 parent1_node_counter; parent_num_nodes expr2 parent2_node_counter;
 					 let number_of_nodes_parent1 = !parent1_node_counter in
-					 let parent1_node_number = Random.int (number_of_nodes_parent1) in
+					 let parent1_node_number = (Random.int (number_of_nodes_parent1) + 1) in
 					 let parent1_sub_expr = find_sub_expr expr1 parent1_node_number in
 					 let number_of_nodes_parent2 = !parent2_node_counter in
-					 let parent2_node_number = Random.int (number_of_nodes_parent2) in
+					 let parent2_node_number = (Random.int (number_of_nodes_parent2) + 1) in
 					 let parent2_sub_expr = find_sub_expr expr2 parent2_node_number in
 					 reset_node_counter parent1_node_counter; reset_node_counter parent2_node_counter;
 					 let offspring1 = replace_sub_expr expr1 parent2_sub_expr parent1_node_number in
@@ -335,13 +335,13 @@ let hd list = match list with
 let tl list = match list with
   | h :: t -> t
   
-let create_new_generation old_sorted_generation iterations = match iterations with
+let rec create_new_generation old_sorted_generation iterations = match iterations with
   | 0 -> []
   | k -> let random_number = Random.float 1.0 in
 	 match (random_number > 0.9) with
 	 | true -> let offspring = (tournament_selection 1) in
 		   if random_number < 0.98 then (reproduction (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
-		   else (mutation (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
+		   else (reproduction (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
 	 | false -> let offspring = (tournament_selection 2) in
 		    (crossover (hd(offspring)) (hd(tl(offspring)))) @ (create_new_generation old_sorted_generation (iterations - 1))
 									
