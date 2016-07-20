@@ -227,8 +227,12 @@ let rec num_nodes expr = match expr with
   | Plus(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
 
 let rec mutation individual = match individual with
-  | (expr,fitness) -> num_nodes expr; find_node_by_depth_first_search_and_mutate expr !node_counter
-				
+  | (expr,fitness) -> num_nodes expr; let number_of_nodes = !node_counter in
+		      let mutant_node_number = Random.int (number_of_nodes) in
+		      find_node_by_depth_first_search_and_mutate expr mutant_node_number
+
+let mutate_and_reset_node_counter = (fun individual ->
+    let mutated_individual = (mutation individual) in (reset_counter ()); mutated_individual)
 
 			
 
