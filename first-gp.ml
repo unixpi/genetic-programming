@@ -199,10 +199,34 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 	 | Int z -> choose_random_element term_set
 	 | Float z -> choose_random_element term_set
 	 | Plus(e1, e2) -> (let random_n = Random.float 1.0 in
-			   match (random_n < 0.66) with
-			   |  true  -> (match (random_n < 0.33) with
+			   match (random_n < 0.6666666666) with
+			   |  true  -> (match (random_n < 0.3333333333) with
 				       | true  -> Minus(e1, e2) 
 				       | false -> Times(e1, e2)
+				       )
+		           |  false -> Div(e1,e2)		     
+			   )
+	 | Minus(e1, e2) -> (let random_n = Random.float 1.0 in
+			   match (random_n < 0.6666666666) with
+			   |  true  -> (match (random_n < 0.3333333333) with
+				       | true  -> Plus(e1, e2) 
+				       | false -> Times(e1, e2)
+				       )
+		           |  false -> Div(e1,e2)		     
+			   )
+  	 | Div(e1, e2) -> (let random_n = Random.float 1.0 in
+			   match (random_n < 0.6666666666) with
+			   |  true  -> (match (random_n < 0.3333333333) with
+				       | true  -> Minus(e1, e2) 
+				       | false -> Times(e1, e2)
+				       )
+		           |  false -> Plus(e1,e2)		     
+			   )
+  	 | Times(e1, e2) -> (let random_n = Random.float 1.0 in
+			   match (random_n < 0.6666666666) with
+			   |  true  -> (match (random_n < 0.3333333333) with
+				       | true  -> Minus(e1, e2) 
+				       | false -> Plus(e1, e2)
 				       )
 		           |  false -> Div(e1,e2)		     
 			   )
@@ -211,9 +235,16 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 	  | Var x -> raise (Position_so_far k)
 	  | Int z -> raise (Position_so_far k)
 	  | Float z -> raise (Position_so_far k)
-	  | Plus(e1,e2) -> try Plus((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
-			   | Position_so_far x -> Plus(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) )
+	  | Plus(e1,e2) -> (try Plus((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
+			    | Position_so_far x -> Plus(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) ))
+	  | Minus(e1,e2) -> (try Minus((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
+			    | Position_so_far x -> Minus(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) ))
+  	  | Times(e1,e2) -> (try Times((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
+			    | Position_so_far x -> Times(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) ))
+	  | Div(e1,e2) -> try Div((find_node_by_depth_first_search_and_mutate e1 (k-1)), e2) with
+			   | Position_so_far x -> Div(e1, (find_node_by_depth_first_search_and_mutate e2 (x-1)) )
 	 )
+
 
 
 let node_counter = ref 0
@@ -225,6 +256,10 @@ let rec num_nodes expr = match expr with
   | Int z -> node_counter := (!node_counter + 1)
   | Float z -> node_counter := (!node_counter + 1)
   | Plus(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
+  | Minus(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
+  | Div(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
+  | Times(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
+										
 
 let rec mutation individual = match individual with
   | (expr,fitness) -> num_nodes expr; let number_of_nodes = !node_counter in
@@ -234,6 +269,9 @@ let rec mutation individual = match individual with
 let mutate_and_reset_node_counter = (fun individual ->
     let mutated_individual = (mutation individual) in (reset_counter ()); mutated_individual)
 
+
+let crossover parent1 parent2 = 
+	      
 			
 
 
