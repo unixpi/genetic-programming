@@ -246,7 +246,6 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 	 )
 
 
-
 let node_counter = ref 0
 
 let reset_counter () = (node_counter := 0)
@@ -270,8 +269,32 @@ let mutate_and_reset_node_counter = (fun individual ->
     let mutated_individual = (mutation individual) in (reset_counter ()); mutated_individual)
 
 
-let crossover parent1 parent2 = 
-	      
+let crossover parent1 parent2 =  "placeholder"
+
+
+let rec find_sub_expr expr num = match num with
+  | 1 -> (match expr with
+	  | x -> x
+	 )
+  | k -> (match expr with
+	  | Var x -> raise (Position_so_far k)
+	  | Int z -> raise (Position_so_far k)
+	  | Float z -> raise (Position_so_far k)
+	  | Plus(e1,e2) -> (try Plus((find_sub_expr e1 (k-1)), e2) with
+			    | Position_so_far x -> Plus(e1, (find_sub_expr e2 (x-1)) ))
+	  | Minus(e1,e2) -> (try Minus((find_sub_expr e1 (k-1)), e2) with
+			    | Position_so_far x -> Minus(e1, (find_sub_expr e2 (x-1)) ))
+  	  | Times(e1,e2) -> (try Times((find_sub_expr e1 (k-1)), e2) with
+			    | Position_so_far x -> Times(e1, (find_sub_expr e2 (x-1)) ))
+	  | Div(e1,e2) -> (try Div((find_sub_expr e1 (k-1)), e2) with
+			   | Position_so_far x -> Div(e1, (find_sub_expr e2 (x-1)) ))
+	 )
+
+	   
+
+
+
+  
 			
 
 
