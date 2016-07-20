@@ -271,20 +271,20 @@ let mutate_and_reset_node_counter = (fun individual ->
 
 let rec find_sub_expr expr num = match num with
   | 1 -> (match expr with
-	  | x -> x
+	  | _ -> expr
 	 )
   | k -> (match expr with
 	  | Var x -> raise (Position_so_far k)
 	  | Int z -> raise (Position_so_far k)
 	  | Float z -> raise (Position_so_far k)
-	  | Plus(e1,e2) -> (try Plus((find_sub_expr e1 (k-1)), e2) with
-			    | Position_so_far x -> Plus(e1, (find_sub_expr e2 (x-1)) ))
-	  | Minus(e1,e2) -> (try Minus((find_sub_expr e1 (k-1)), e2) with
-			    | Position_so_far x -> Minus(e1, (find_sub_expr e2 (x-1)) ))
-  	  | Times(e1,e2) -> (try Times((find_sub_expr e1 (k-1)), e2) with
-			    | Position_so_far x -> Times(e1, (find_sub_expr e2 (x-1)) ))
-	  | Div(e1,e2) -> (try Div((find_sub_expr e1 (k-1)), e2) with
-			   | Position_so_far x -> Div(e1, (find_sub_expr e2 (x-1)) ))
+	  | Plus(e1,e2) -> (try find_sub_expr e1 (k-1) with
+			    | Position_so_far x -> find_sub_expr e2 (x-1) )
+  	  | Minus(e1,e2) -> (try find_sub_expr e1 (k-1) with
+			    | Position_so_far x -> find_sub_expr e2 (x-1) )
+	  | Times(e1,e2) -> (try find_sub_expr e1 (k-1) with
+			     | Position_so_far x -> find_sub_expr e2 (x-1) )
+	  | Div(e1,e2) -> (try find_sub_expr e1 (k-1) with
+			    | Position_so_far x -> find_sub_expr e2 (x-1) )
 	 )
 
 let rec replace_sub_expr expr replacement_sub_expr pos  = match pos with
