@@ -276,7 +276,7 @@ let rec mutation individual = match individual with
 		      let mutant_node_number = Random.int (number_of_nodes) in
 		      find_node_by_depth_first_search_and_mutate expr (mutant_node_number + 1)
 
-let mutate_and_reset_node_counter = (fun individual ->
+let mutate = (fun individual ->
     let mutated_individual = (mutation individual) in (reset_counter ()); mutated_individual)
 
 
@@ -341,7 +341,7 @@ let rec create_new_generation old_sorted_generation iterations = match iteration
 	 match (random_number > 0.9) with
 	 | true -> let offspring = (tournament_selection 1) in
 		   if random_number < 0.98 then (reproduction (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
-		   else (reproduction (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
+		   else (mutate (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
 	 | false -> let offspring = (tournament_selection 2) in
 		    (crossover (hd(offspring)) (hd(tl(offspring)))) @ (create_new_generation old_sorted_generation (iterations - 1))
 									
