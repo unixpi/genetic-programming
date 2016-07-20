@@ -247,7 +247,9 @@ let rec find_node_by_depth_first_search_and_mutate expr num = match num with
 
 
 let node_counter = ref 0
-
+let parent1_node_counter = ref 0
+let parent2_node_counter = ref 0
+let reset_node_counter node_ref = (node_ref := 0)    
 let reset_counter () = (node_counter := 0)
   
 let rec num_nodes expr = match expr with
@@ -258,7 +260,16 @@ let rec num_nodes expr = match expr with
   | Minus(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
   | Div(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
   | Times(e1,e2) -> node_counter := (!node_counter + 1); num_nodes e1; num_nodes e2
-										
+
+let rec parent_num_nodes expr node_counter = match expr with
+  | Var x -> node_counter := (!node_counter + 1)
+  | Int z -> node_counter := (!node_counter + 1)
+  | Float z -> node_counter := (!node_counter + 1)
+  | Plus(e1,e2) -> node_counter := (!node_counter + 1); parent_num_nodes e1 node_counter; parent_num_nodes e2 node_counter
+  | Minus(e1,e2) -> node_counter := (!node_counter + 1); parent_num_nodes e1 node_counter; parent_num_nodes e2 node_counter
+  | Div(e1,e2) -> node_counter := (!node_counter + 1); parent_num_nodes e1 node_counter; parent_num_nodes e2 node_counter
+  | Times(e1,e2) -> node_counter := (!node_counter + 1); parent_num_nodes e1 node_counter; parent_num_nodes e2 node_counter
+				
 
 let rec mutation individual = match individual with
   | (expr,fitness) -> num_nodes expr; let number_of_nodes = !node_counter in
@@ -305,7 +316,22 @@ let rec replace_sub_expr expr replacement_sub_expr pos  = match pos with
 			    | Position_so_far x -> Times(e1, (replace_sub_expr e2 replacement_sub_expr (x-1)) ))
 	 )
 
-let crossover parent1 parent2 =  "placeholder"
+let crossover parent1 parent2 = match parent1, parent2 with
+  | (expr1,fitness1),(expr2,fitness2) -> parent_num_nodes expr1 parent1_node_counter; parent_num_nodes expr2 parent2_node_counter;
+					 let number_of_nodes_parent1 = !parent1_node_counter in
+					 let parent1_node_number = Random.int (number_of_nodes_parent1) in
+					 let parent1_sub_expr = find_sub_expr expr1 parent1_node_number in
+					 let number_of_nodes_parent2 = !parent2_node_counter in
+					 let parent2_node_number = Random.int (number_of_nodes_parent2) in
+					 let parent2_sub_expr = find_sub_expr expr2 parent2_node_number in
+					 reset_node_counter parent1_node_counter; reset_node_counter parent2_node_counter;
+					 let offspring1 = replace_sub_expr expr1 parent2_sub_expr parent1_node_number in
+					 let offspring2 = replace_sub_expr expr2 parent1_sub_expr parent2_node_number in
+					 [offspring1; offspring2]
+  
+								     
+							  
+  
 				   
 	   
 
