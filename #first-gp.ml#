@@ -359,7 +359,7 @@ let rec evolution generation num  = match num with
   
   (* add in best_so_far update, test with "grow"  *)			 
 			           
-let rec run_genetic_program size_of_initial_pop offspring_over_two generations =
+let rec run_genetic_program offspring_over_two generations =
   let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop size 0.5 population)) in
   let new_gen = sort_new_generation(create_new_generation sorted_population offspring_over_two) in
   evolution new_gen generations
