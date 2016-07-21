@@ -147,9 +147,6 @@ let rec map f l = match l with
 
 (* generate initial population and calculate initial fitness *)
 
-let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop 4 0.5 population))
-
-let t_prob = 0.8
  
 let sort_pop_by_fitness pop_list = List.sort (fun (x1,y1) (x2,y2) -> compare y1 y2) pop_list
 	   
@@ -344,8 +341,23 @@ let rec create_new_generation old_sorted_generation iterations = match iteration
 		   else (mutate (hd(offspring))) :: (create_new_generation old_sorted_generation (iterations - 1))
 	 | false -> let offspring = (tournament_selection 2) in
 		    (crossover (hd(offspring)) (hd(tl(offspring)))) @ (create_new_generation old_sorted_generation (iterations - 1))
+
+let best_so_far = ref (Float 2.0, 999999999999.0)
+let t_prob = 0.8
+
+let rec sort_new_generation pop = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) pop)
+
+let rec evolution generations =
+							 
+			           
+let rec run_genetic_program size_of_initial_pop offspring_over_two generations =
+  let sorted_population = sort_pop_by_fitness (map (calculate_fitness (-1.0) 1.0 0.1 (fun x -> x *. x +. x +. 1.0)) (generate_initial_pop size 0.5 population)) in
+  sort_new_generation(create_new_generation sorted_population offspring_over_two)
+  
+  
+  
+  
 									
-						 
 	 
 	   
 		      
